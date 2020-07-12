@@ -1,7 +1,10 @@
 package com.hertzog.KoreanCodingVocabQuizzer;
 
+import org.springframework.stereotype.Component;
+
 import java.util.Random;
 
+@Component
 public class WeightedRandomizer {
     Random random;
     private int[] weightedArray;

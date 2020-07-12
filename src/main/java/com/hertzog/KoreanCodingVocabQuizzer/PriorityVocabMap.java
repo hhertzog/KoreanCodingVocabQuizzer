@@ -1,9 +1,11 @@
 package com.hertzog.KoreanCodingVocabQuizzer;
 
 import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 
+@Component
 public class PriorityVocabMap extends HashMap<Integer, List<Vocab>> {
 
     @Override
