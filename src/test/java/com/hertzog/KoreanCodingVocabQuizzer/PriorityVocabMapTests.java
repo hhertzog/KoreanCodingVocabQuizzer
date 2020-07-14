@@ -13,9 +13,10 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 @SpringBootTest
 public class PriorityVocabMapTests {
+    private static final int PRIORITY = 2;
     private static final String ENGLISH = "english";
     private static final String KOREAN = "한국어";
-    private static final int PRIORITY = 2;
+
     private static final Vocab VOCAB1 = new Vocab(ENGLISH + 1, KOREAN + 1);
     private static final Vocab VOCAB2 = new Vocab(ENGLISH + 2, KOREAN + 2);
     private static final Vocab VOCAB3 = new Vocab(ENGLISH + 3, KOREAN + 3);
@@ -159,6 +160,21 @@ public class PriorityVocabMapTests {
             fail("did not throw illegal arg exception");
         } catch (IllegalArgumentException e) {
         }
+    }
+
+    @Test
+    public void whenToString_givenFilledMap_thenReturnProperString() {
+        map.put(PRIORITY, getFullVocabList());
+        assertThat(map.toString()).isEqualTo(getExpectedFullMapString());
+    }
+
+    @Test
+    public void whenToString_givenEmptyMap_thenReturnEmptyString() {
+        assertThat(map.toString()).isEqualTo("");
+    }
+
+    private String getExpectedFullMapString() {
+        return "Vocabs for priority " + PRIORITY + ": \n" + getFullVocabList().toString();
     }
 
     private List<Vocab> getSingleVocabList() {

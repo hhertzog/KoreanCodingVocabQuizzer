@@ -63,8 +63,8 @@ public class PriorityVocabMap extends HashMap<Integer, List<Vocab>> {
         String result = "";
         for (Entry<Integer, List<Vocab>> entry : this.entrySet()) {
             result = result + "Vocabs for priority " + entry.getKey() + ": \n" +
-                    entry.getValue().toString() + "\n";
+                    entry.getValue().toString();
         }
-        return result;
+        return result.trim();
     }
 }
