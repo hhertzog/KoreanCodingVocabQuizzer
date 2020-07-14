@@ -9,7 +9,7 @@ import java.util.*;
 public class PriorityVocabMap extends HashMap<Integer, List<Vocab>> {
 
     @Override
-    public List<Vocab> put(Integer priority, @NonNull List<Vocab> vocabList) {
+    public List<Vocab> put(Integer priority, @NonNull List<Vocab> vocabList) throws IllegalArgumentException {
         if (vocabList.size() == 0 || priority < 1) {
             throw new IllegalArgumentException("List must contain at least one vocab & have priority > 0");
         }
@@ -28,7 +28,7 @@ public class PriorityVocabMap extends HashMap<Integer, List<Vocab>> {
 
     // if removing the vocab leaves its priority list empty, remove the list from the map
     // returns the vocab's old priority
-    public int removeVocab(@NonNull Vocab vocab) {
+    public int removeVocab(@NonNull Vocab vocab) throws IllegalArgumentException {
         int priority = findVocabPriority(vocab);
         this.get(priority).remove(vocab);
         if (this.get(priority).isEmpty()) {
@@ -37,20 +37,20 @@ public class PriorityVocabMap extends HashMap<Integer, List<Vocab>> {
         return priority;
     }
 
-    public void incrementVocabPriority(Vocab vocab) {
+    public void incrementVocabPriority(@NonNull Vocab vocab) throws IllegalArgumentException {
         changeVocabPriority(vocab, + 1);
     }
 
-    public void decrementVocabPriority(Vocab vocab) {
+    public void decrementVocabPriority(@NonNull Vocab vocab) throws IllegalArgumentException {
         changeVocabPriority(vocab, - 1);
     }
 
-    private void changeVocabPriority(Vocab vocab, int priorityChange) {
+    private void changeVocabPriority(Vocab vocab, int priorityChange) throws IllegalArgumentException {
         int currentPriority = removeVocab(vocab);
         addVocab(currentPriority + priorityChange, vocab);
     }
 
-    private int findVocabPriority(Vocab vocab) {
+    private int findVocabPriority(Vocab vocab) throws IllegalArgumentException {
         for (Entry<Integer, List<Vocab>> entry : this.entrySet()) {
             if (entry.getValue().contains(vocab)) {
                 return entry.getKey();

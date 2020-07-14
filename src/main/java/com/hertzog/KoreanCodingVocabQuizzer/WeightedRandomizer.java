@@ -9,7 +9,7 @@ public class WeightedRandomizer {
     Random random;
     private int[] weightedArray;
 
-    public WeightedRandomizer(int highestWeight) {
+    public WeightedRandomizer(int highestWeight) throws IllegalArgumentException {
         if (highestWeight < 1) {
             throw new IllegalArgumentException("Highest weight must be greater than or equal to 1");
         }

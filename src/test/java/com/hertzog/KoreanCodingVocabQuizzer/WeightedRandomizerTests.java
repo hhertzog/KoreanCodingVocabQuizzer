@@ -1,10 +1,12 @@
 package com.hertzog.KoreanCodingVocabQuizzer;
 
+import org.junit.Rule;
 import org.junit.jupiter.api.Test;
+import org.junit.rules.ExpectedException;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @SpringBootTest
 public class WeightedRandomizerTests {
@@ -15,7 +17,11 @@ public class WeightedRandomizerTests {
 
     @Test
     public void whenCreateRandomizer_givenNegativeHighestWeight_thenThrowException() {
-        assertThrows(IllegalArgumentException.class, () -> new WeightedRandomizer(ILLEGAL_WEIGHT));
+        try {
+            WeightedRandomizer badRandomizer = new WeightedRandomizer(ILLEGAL_WEIGHT);
+            fail("did not throw illegal arg exception");
+        } catch (IllegalArgumentException e) {
+        }
     }
 
     @Test
