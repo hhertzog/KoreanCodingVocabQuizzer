@@ -1,7 +1,6 @@
 package com.hertzog.KoreanCodingVocabQuizzer;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -10,13 +9,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 
 @SpringBootTest
 public class QuizManagerTests {
-    private static boolean initIsDone = false;
     private static final int PRIORITY = 2;
     private static final String ENGLISH = "english";
     private static final String KOREAN = "한국어";
@@ -51,7 +50,7 @@ public class QuizManagerTests {
         try {
             when(priorityVocabMap.isEmpty()).thenReturn(true);
             quizManager.getRandomVocab();
-            Assert.fail("did not throw illegal state exception");
+            fail("did not throw illegal state exception");
         } catch (IllegalStateException e) {
         }
     }
@@ -66,6 +65,7 @@ public class QuizManagerTests {
         try {
             doThrow(IllegalArgumentException.class).when(priorityVocabMap).incrementVocabPriority(VOCAB1);
             quizManager.raisePriority(VOCAB1);
+            fail("did not throw illegal argument exception");
         } catch (IllegalArgumentException e) {
         }
     }
@@ -80,6 +80,7 @@ public class QuizManagerTests {
         try {
             doThrow(IllegalArgumentException.class).when(priorityVocabMap).decrementVocabPriority(VOCAB1);
             quizManager.lowerPriority(VOCAB1);
+            fail("did not throw illegal argument exception");
         } catch (IllegalArgumentException e) {
         }
     }

@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.Assert.fail;
 
 @SpringBootTest
 public class VocabTests {
@@ -50,6 +51,7 @@ public class VocabTests {
     public void whenParseVocabFromString_givenBadString_thenThrowException() {
         try {
             Vocab.parseVocabFromString("]bad string[");
+            fail("did not throw illegal state exception");
         } catch (IllegalArgumentException e) {
         }
     }
