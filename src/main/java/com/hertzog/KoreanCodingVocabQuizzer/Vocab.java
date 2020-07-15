@@ -25,6 +25,14 @@ public class Vocab {
         return this.korWord;
     }
 
+    public static Vocab parseVocabFromString(@NonNull String vocabString) throws IllegalArgumentException {
+        if (!vocabString.startsWith("[") || !vocabString.endsWith("]") || !vocabString.contains(":")) {
+            throw new IllegalArgumentException("String \"" + vocabString + "\" is not in a parsable format");
+        }
+        String[] englishAndKoreanVocabs = vocabString.replaceAll("\\[|\\]", "").split(":");
+        return new Vocab(englishAndKoreanVocabs[0].trim(), englishAndKoreanVocabs[1].trim());
+    }
+
     @Override
     public String toString() {
         return  "[" + this.engWord + " : " + this.korWord + "]";

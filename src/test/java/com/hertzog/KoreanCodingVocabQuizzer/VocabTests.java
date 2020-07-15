@@ -39,4 +39,19 @@ public class VocabTests {
         assertThat(testVocab.toString()).isEqualTo(EXPECTED_STRING);
     }
 
+    @Test
+    public void whenParseVocabFromString_givenProperlyFormattedString_thenReturnVocab() {
+        Vocab result = Vocab.parseVocabFromString(EXPECTED_STRING);
+        assertThat(result.getEngWord()).isEqualTo(TEST_ENGLISH);
+        assertThat(result.getKorWord()).isEqualTo(TEST_KOREAN);
+    }
+
+    @Test
+    public void whenParseVocabFromString_givenBadString_thenThrowException() {
+        try {
+            Vocab.parseVocabFromString("]bad string[");
+        } catch (IllegalArgumentException e) {
+        }
+    }
+
 }
