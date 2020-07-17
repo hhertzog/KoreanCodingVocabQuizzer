@@ -16,12 +16,12 @@ public class Config {
 
     @Bean
     public QuizManager quizManager() {
-        return new QuizManager(priorityVocabMap(), weightedRandomizer());
+        return new QuizManager(priorityVocabMap(), weightedRandomizer(), translationsFileLoader());
     }
 
     @Bean
     public PriorityVocabMap priorityVocabMap() {
-        return new PriorityVocabMap();
+        return new PriorityVocabMap(lowestPriority(), highestPriority());
     }
 
     @Bean
@@ -29,8 +29,17 @@ public class Config {
         return new WeightedRandomizer(highestPriority());
     }
 
+    @Bean
+    public TranslationsFileLoader translationsFileLoader() {
+        return new TranslationsFileLoader();
+    }
+
     public int highestPriority() {
         return Integer.parseInt(getConfigValue("highestPriority"));
+    }
+
+    public int lowestPriority() {
+        return Integer.parseInt(getConfigValue("lowestPriority"));
     }
 
     private String getConfigValue(String configKey){

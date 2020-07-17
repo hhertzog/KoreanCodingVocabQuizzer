@@ -6,8 +6,9 @@ import java.util.Random;
 
 @Component
 public class WeightedRandomizer {
-    Random random;
     private int[] weightedArray;
+    private Random random;
+
 
     public WeightedRandomizer(int highestWeight) throws IllegalArgumentException {
         if (highestWeight < 1) {

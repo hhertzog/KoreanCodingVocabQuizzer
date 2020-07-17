@@ -7,18 +7,31 @@ import java.util.*;
 
 @Component
 public class PriorityVocabMap extends HashMap<Integer, List<Vocab>> {
+    private int lowestPriority;
+    private int highestPriority;
+
+    public PriorityVocabMap(int lowestPriority, int highestPriority) {
+        this.lowestPriority = lowestPriority;
+        this.highestPriority = highestPriority;
+    }
 
     @Override
     public List<Vocab> put(Integer priority, @NonNull List<Vocab> vocabList) throws IllegalArgumentException {
-        if (vocabList.size() == 0 || priority < 1) {
-            throw new IllegalArgumentException("List must contain at least one vocab & have priority > 0");
+        if (vocabList.size() == 0 || priority < lowestPriority || priority > highestPriority) {
+            throw new IllegalArgumentException("List must contain at least one vocab" +
+                    " & have a priority between " + lowestPriority + " and " + highestPriority);
         }
         List<Vocab> oldList = this.get(priority);
         super.put(priority, vocabList);
         return oldList;
     }
 
-    public void addVocab(int priority, @NonNull Vocab vocab) {
+    public void addVocab(int priority, @NonNull Vocab vocab) throws IllegalArgumentException{
+        if (priority < lowestPriority || priority > highestPriority) {
+            throw new IllegalArgumentException("Priority must be between " + lowestPriority
+                    + " and " + highestPriority);
+        }
+
         if (this.containsKey(priority)) {
             this.get(priority).add(vocab);
         } else {

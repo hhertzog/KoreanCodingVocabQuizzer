@@ -1,6 +1,5 @@
 package com.hertzog.KoreanCodingVocabQuizzer;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;

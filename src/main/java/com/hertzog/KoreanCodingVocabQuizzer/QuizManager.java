@@ -3,20 +3,27 @@ package com.hertzog.KoreanCodingVocabQuizzer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 
-import java.util.List;
 import java.util.Random;
-
 
 public class QuizManager {
     private PriorityVocabMap vocabMap;
     private WeightedRandomizer prioritySelector;
+    private TranslationsFileLoader fileLoader;
     private Random vocabSelector;
 
     @Autowired
-    public QuizManager(@NonNull PriorityVocabMap vocabMap, @NonNull WeightedRandomizer weightedRandomizer) {
+    public QuizManager(@NonNull PriorityVocabMap vocabMap,
+                       @NonNull WeightedRandomizer weightedRandomizer,
+                       @NonNull TranslationsFileLoader fileLoader) {
         this.vocabMap = vocabMap;
         this.prioritySelector = weightedRandomizer;
+        this.fileLoader = fileLoader;
         this.vocabSelector = new Random();
+    }
+
+    //TODO: implement loading vocabs + add junit tests
+    public void loadVocabs(String filePath) {
+        //TranslationsFileLoader loader = new TranslationsFileLoader(filePath);
     }
 
     public Vocab getRandomVocab() throws IllegalStateException {
@@ -28,8 +35,6 @@ public class QuizManager {
             priority = prioritySelector.getWeightedRandomInt();
         }
 
-        List<Vocab> list = vocabMap.get(priority);
-        System.err.println("full vocab list?" + (list == null));
         int randomVocabIndex = vocabSelector.nextInt(vocabMap.get(priority).size());
         return vocabMap.get(priority).get(randomVocabIndex);
     }

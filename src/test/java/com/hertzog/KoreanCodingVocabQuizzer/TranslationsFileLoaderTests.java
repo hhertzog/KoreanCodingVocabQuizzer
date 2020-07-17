@@ -7,13 +7,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.fail;
 
 @SpringBootTest
 public class TranslationsFileLoaderTests {
-    private String goodPath = "C:\\Users\\hhert\\IdeaProjects\\KoreanCodingVocabQuizzer\\src\\test\\java\\com\\hertzog\\KoreanCodingVocabQuizzer\\translations";
-    private String badPath = "C:\\Users\\hhert\\IdeaProjects\\KoreanCodingVocabQuizzer\\src\\test\\java\\com\\hertzog\\KoreanCodingVocabQuizzer\\badFile";
-    private int startingPriority = 2;
+    private String GOOD_PATH = "C:\\Users\\hhert\\IdeaProjects\\KoreanCodingVocabQuizzer\\src\\test\\java\\com\\hertzog\\KoreanCodingVocabQuizzer\\translations";
+    private String BAD_PATH = "C:\\Users\\hhert\\IdeaProjects\\KoreanCodingVocabQuizzer\\src\\test\\java\\com\\hertzog\\KoreanCodingVocabQuizzer\\badFile";
+    private String NONEXISTENT_FILE_PATH = "nonexistent file";
+    private int LOWEST_PRIORITY = 1;
+    private int HIGHEST_PRIORITY = 3;
     private static final String ENGLISH = "english";
     private static final String KOREAN = "한국어";
     private static final Vocab VOCAB1 = new Vocab(ENGLISH + 1, KOREAN + 1);
@@ -24,29 +25,33 @@ public class TranslationsFileLoaderTests {
     private TranslationsFileLoader fileLoader;
 
     @Test
-    public void whenLoadAllVocabsIntoPriorityMap_givenProperlyFormattedFile_thenLoadsVocabsIntoMap() throws Exception {
-        fileLoader = new TranslationsFileLoader(startingPriority, goodPath);
-        PriorityVocabMap map = new PriorityVocabMap();
+    public void whenLoadAllVocabsFromFileIntoMap_givenProperlyFormattedFile_thenLoadsVocabsIntoMap() {
+        fileLoader = new TranslationsFileLoader();
+        PriorityVocabMap map = new PriorityVocabMap(LOWEST_PRIORITY, HIGHEST_PRIORITY);
 
-        fileLoader.loadAllVocabsIntoPriorityMap(map);
+        fileLoader.loadAllVocabsFromFileIntoMap(LOWEST_PRIORITY, GOOD_PATH, map);
         assertThat(map.entrySet().containsAll(getFilledMap().entrySet()));
     }
 
     @Test
-    public void whenLoadAllVocabsIntoPriorityMap_givenImproperlyFormattedFile_thenThrowsException() throws Exception {
-        fileLoader = new TranslationsFileLoader(startingPriority, badPath);
-        PriorityVocabMap map = new PriorityVocabMap();
+    public void whenLoadAllVocabsFromFileIntoMap_givenImproperlyFormattedFile_thenNothingAddedToMap() {
+        fileLoader = new TranslationsFileLoader();
+        PriorityVocabMap map = new PriorityVocabMap(LOWEST_PRIORITY, HIGHEST_PRIORITY);
+        fileLoader.loadAllVocabsFromFileIntoMap(LOWEST_PRIORITY, BAD_PATH, map);
+        assertThat(map.isEmpty());
+    }
 
-        try {
-            fileLoader.loadAllVocabsIntoPriorityMap(map);
-            fail("did not throw illegal argument exception");
-        } catch (IllegalArgumentException e) {
-        }
+    @Test
+    public void whenLoadAllVocabsFromFileIntoMap_givenNonexistentFilePath_thenNothingAddedToMap() {
+        fileLoader = new TranslationsFileLoader();
+        PriorityVocabMap map = new PriorityVocabMap(LOWEST_PRIORITY, HIGHEST_PRIORITY);
+        fileLoader.loadAllVocabsFromFileIntoMap(LOWEST_PRIORITY, NONEXISTENT_FILE_PATH, map);
+        assertThat(map.isEmpty());
     }
 
     private PriorityVocabMap getFilledMap() {
-        PriorityVocabMap filledMap = new PriorityVocabMap();
-        filledMap.put(startingPriority, fullVocabList);
+        PriorityVocabMap filledMap = new PriorityVocabMap(LOWEST_PRIORITY, HIGHEST_PRIORITY);
+        filledMap.put(LOWEST_PRIORITY, fullVocabList);
         return filledMap;
     }
 

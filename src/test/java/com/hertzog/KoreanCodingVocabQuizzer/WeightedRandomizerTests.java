@@ -11,7 +11,7 @@ public class WeightedRandomizerTests {
     private static final int TEST_WEIGHT = 4;
     private static final int ILLEGAL_WEIGHT = -1;
 
-    private WeightedRandomizer testRandomizer = new WeightedRandomizer(TEST_WEIGHT);
+    private WeightedRandomizer randomizer = new WeightedRandomizer(TEST_WEIGHT);
 
     @Test
     public void whenCreateRandomizer_givenNegativeHighestWeight_thenThrowException() {
@@ -24,6 +24,6 @@ public class WeightedRandomizerTests {
 
     @Test
     public void whenGetWeightedRandomInt_givenProperInitialization_returnInt() {
-        assertThat(testRandomizer.getWeightedRandomInt()).isLessThanOrEqualTo(TEST_WEIGHT);
+        assertThat(randomizer.getWeightedRandomInt()).isLessThanOrEqualTo(TEST_WEIGHT);
     }
 }
