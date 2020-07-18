@@ -10,8 +10,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 public class TranslationsFileLoaderTests {
-    private String GOOD_PATH = "C:\\Users\\hhert\\IdeaProjects\\KoreanCodingVocabQuizzer\\src\\test\\java\\com\\hertzog\\KoreanCodingVocabQuizzer\\translations";
-    private String BAD_PATH = "C:\\Users\\hhert\\IdeaProjects\\KoreanCodingVocabQuizzer\\src\\test\\java\\com\\hertzog\\KoreanCodingVocabQuizzer\\badFile";
+    private String GOOD_FILE = "C:\\Users\\hhert\\IdeaProjects\\KoreanCodingVocabQuizzer\\src\\test\\java\\com\\hertzog\\KoreanCodingVocabQuizzer\\translations";
+    private String BAD_FILE = "C:\\Users\\hhert\\IdeaProjects\\KoreanCodingVocabQuizzer\\src\\test\\java\\com\\hertzog\\KoreanCodingVocabQuizzer\\badFile";
     private String NONEXISTENT_FILE_PATH = "nonexistent file";
     private int LOWEST_PRIORITY = 1;
     private int HIGHEST_PRIORITY = 3;
@@ -29,7 +29,7 @@ public class TranslationsFileLoaderTests {
         fileLoader = new TranslationsFileLoader();
         PriorityVocabMap map = new PriorityVocabMap(LOWEST_PRIORITY, HIGHEST_PRIORITY);
 
-        fileLoader.loadAllVocabsFromFileIntoMap(LOWEST_PRIORITY, GOOD_PATH, map);
+        fileLoader.loadAllVocabsFromFileIntoMap(LOWEST_PRIORITY, GOOD_FILE, map);
         assertThat(map.entrySet().containsAll(getFilledMap().entrySet()));
     }
 
@@ -37,7 +37,7 @@ public class TranslationsFileLoaderTests {
     public void whenLoadAllVocabsFromFileIntoMap_givenImproperlyFormattedFile_thenNothingAddedToMap() {
         fileLoader = new TranslationsFileLoader();
         PriorityVocabMap map = new PriorityVocabMap(LOWEST_PRIORITY, HIGHEST_PRIORITY);
-        fileLoader.loadAllVocabsFromFileIntoMap(LOWEST_PRIORITY, BAD_PATH, map);
+        fileLoader.loadAllVocabsFromFileIntoMap(LOWEST_PRIORITY, BAD_FILE, map);
         assertThat(map.isEmpty());
     }
 

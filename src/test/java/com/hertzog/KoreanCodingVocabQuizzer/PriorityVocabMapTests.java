@@ -136,13 +136,10 @@ public class PriorityVocabMapTests {
     }
 
     @Test
-    public void whenIncrementVocabPriority_givenVocabHasHighestPriority_thenThrowIllegalArgException() {
+    public void whenIncrementVocabPriority_givenVocabHasHighestPriority_thenDoesntChangePriority() {
         map.addVocab(HIGHEST_PRIORITY, VOCAB1);
-        try {
-            map.decrementVocabPriority(VOCAB2);
-            fail("did not throw illegal arg exception");
-        } catch (IllegalArgumentException e) {
-        }
+        map.incrementVocabPriority(VOCAB1);
+        assertThat(map.removeVocab(VOCAB1)).isEqualTo(HIGHEST_PRIORITY);
     }
 
     @Test
@@ -173,19 +170,26 @@ public class PriorityVocabMapTests {
     }
 
     @Test
-    public void whenDecrementVocabPriority_givenVocabHasLowestPriority_thenThrowIllegalArgException() {
+    public void whenDecrementVocabPriority_givenVocabHasLowestPriority_thenDoesntChangePriority() {
         map.addVocab(LOWEST_PRIORITY, VOCAB1);
-        try {
-            map.decrementVocabPriority(VOCAB2);
-            fail("did not throw illegal arg exception");
-        } catch (IllegalArgumentException e) {
-        }
+        map.decrementVocabPriority(VOCAB1);
+        assertThat(map.removeVocab(VOCAB1)).isEqualTo(LOWEST_PRIORITY);
     }
 
     @Test
     public void whenToString_givenFilledMap_thenReturnProperString() {
         map.put(LOWEST_PRIORITY, getFullVocabList());
         assertThat(map.toString()).isEqualTo(getExpectedFullMapString());
+    }
+
+    @Test
+    public void whenGetLowestPriority_givenInitializedMap_thenReturnLowestPriority() {
+        assertThat(map.getLowestPriority()).isEqualTo(LOWEST_PRIORITY);
+    }
+
+    @Test
+    public void whenGetHighestPriority_givenInitializedMap_thenReturnHighestPriority() {
+        assertThat(map.getHighestPriority()).isEqualTo(HIGHEST_PRIORITY);
     }
 
     @Test

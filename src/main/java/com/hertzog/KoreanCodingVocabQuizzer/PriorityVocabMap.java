@@ -58,9 +58,15 @@ public class PriorityVocabMap extends HashMap<Integer, List<Vocab>> {
         changeVocabPriority(vocab, - 1);
     }
 
+    // if given vocab has a priority less than the highest possible priority or more than the lowest possible priority,
+    // changes the vocab's priority by priorityChange amount; otherwise, leaves vocab at its current priority
     private void changeVocabPriority(Vocab vocab, int priorityChange) throws IllegalArgumentException {
-        int currentPriority = removeVocab(vocab);
-        addVocab(currentPriority + priorityChange, vocab);
+        int currentPriority = findVocabPriority(vocab);
+        if ((currentPriority < highestPriority && priorityChange > 0) ||
+            (currentPriority > lowestPriority  && priorityChange < 0)) {
+            removeVocab(vocab);
+            addVocab(currentPriority + priorityChange, vocab);
+        }
     }
 
     private int findVocabPriority(Vocab vocab) throws IllegalArgumentException {
@@ -70,6 +76,14 @@ public class PriorityVocabMap extends HashMap<Integer, List<Vocab>> {
             }
         }
         throw new IllegalArgumentException("Vocab " + vocab.getEngWord() + " not in map.");
+    }
+
+    public int getLowestPriority() {
+        return lowestPriority;
+    }
+
+    public int getHighestPriority() {
+        return highestPriority;
     }
 
     public String toString() {

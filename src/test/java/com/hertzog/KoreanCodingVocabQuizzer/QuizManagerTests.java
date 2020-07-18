@@ -9,15 +9,16 @@ import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 @SpringBootTest
 public class QuizManagerTests {
-    private static final int PRIORITY = 2;
+    private static final int LOWEST_PRIORITY = 1;
+    private static final int HIGHEST_PRIORITY = 3;
     private static final String ENGLISH = "english";
     private static final String KOREAN = "한국어";
+    private String GOOD_FILE = "C:\\Users\\hhert\\IdeaProjects\\KoreanCodingVocabQuizzer\\src\\test\\java\\com\\hertzog\\KoreanCodingVocabQuizzer\\translations";
 
     private static final Vocab VOCAB1 = new Vocab(ENGLISH + 1, KOREAN + 1);
     private static final Vocab VOCAB2 = new Vocab(ENGLISH + 2, KOREAN + 2);
@@ -30,15 +31,27 @@ public class QuizManagerTests {
     @Mock
     private WeightedRandomizer weightedRandomizer;
 
+    @Mock
+    private TranslationsFileLoader fileLoader;
+
     @InjectMocks
     private QuizManager quizManager;
 
     @Test
+    public void whenLoadVocabs_givenValidFilePath_thenMakesCallToFileLoader() {
+        when(priorityVocabMap.getLowestPriority()).thenReturn(LOWEST_PRIORITY);
+        quizManager.loadVocabs(GOOD_FILE);
+
+        verify(fileLoader, times(1))
+                .loadAllVocabsFromFileIntoMap(LOWEST_PRIORITY, GOOD_FILE, priorityVocabMap);
+    }
+
+    @Test
     public void whenGetRandomVocab_givenFilledMap_thenReturnVocab() {
         when(priorityVocabMap.isEmpty()).thenReturn(false);
-        when(priorityVocabMap.get(PRIORITY)).thenReturn(fullVocabList);
-        when(priorityVocabMap.keySet()).thenReturn(new HashSet<>(Arrays.asList(PRIORITY)));
-        when(weightedRandomizer.getWeightedRandomInt()).thenReturn(PRIORITY);
+        when(priorityVocabMap.get(HIGHEST_PRIORITY)).thenReturn(fullVocabList);
+        when(priorityVocabMap.keySet()).thenReturn(new HashSet<>(Arrays.asList(HIGHEST_PRIORITY)));
+        when(weightedRandomizer.getWeightedRandomInt()).thenReturn(HIGHEST_PRIORITY);
 
         Vocab vocab = quizManager.getRandomVocab();
         assertThat(fullVocabList.contains(vocab));

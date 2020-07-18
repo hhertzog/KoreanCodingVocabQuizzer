@@ -3,6 +3,7 @@ package com.hertzog.KoreanCodingVocabQuizzer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 
+import java.util.List;
 import java.util.Random;
 
 public class QuizManager {
@@ -21,22 +22,17 @@ public class QuizManager {
         this.vocabSelector = new Random();
     }
 
-    //TODO: implement loading vocabs + add junit tests
     public void loadVocabs(String filePath) {
-        //TranslationsFileLoader loader = new TranslationsFileLoader(filePath);
+        fileLoader.loadAllVocabsFromFileIntoMap(vocabMap.getLowestPriority(), filePath, vocabMap);
     }
 
     public Vocab getRandomVocab() throws IllegalStateException {
         if (vocabMap.isEmpty()) {
             throw new IllegalStateException("Map is empty; cannot retrieve vocabs.");
         }
-        int priority = prioritySelector.getWeightedRandomInt();
-        while (!vocabMap.keySet().contains(priority)) {
-            priority = prioritySelector.getWeightedRandomInt();
-        }
 
-        int randomVocabIndex = vocabSelector.nextInt(vocabMap.get(priority).size());
-        return vocabMap.get(priority).get(randomVocabIndex);
+        int priorityToQuiz = getRandomPriorityPresentInMap();
+        return getRandomVocabForPriority(priorityToQuiz);
     }
 
     public void raisePriority(@NonNull Vocab vocab) throws IllegalArgumentException {
@@ -45,5 +41,18 @@ public class QuizManager {
 
     public void lowerPriority(@NonNull Vocab vocab) throws IllegalArgumentException {
         vocabMap.decrementVocabPriority(vocab);
+    }
+
+    private Vocab getRandomVocabForPriority(int priority) {
+        List<Vocab> vocabList = vocabMap.get(priority);
+        return vocabList.get(vocabSelector.nextInt(vocabList.size()));
+    }
+
+    private int getRandomPriorityPresentInMap() {
+        int priority = prioritySelector.getWeightedRandomInt();
+        while (!vocabMap.keySet().contains(priority)) {
+            priority = prioritySelector.getWeightedRandomInt();
+        }
+        return priority;
     }
 }
