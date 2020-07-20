@@ -10,4 +10,6 @@ class KoreanCodingVocabQuizzerApplicationTests {
 	void contextLoads() {
 	}
 
+	//TODO: unit tests
+
 }
