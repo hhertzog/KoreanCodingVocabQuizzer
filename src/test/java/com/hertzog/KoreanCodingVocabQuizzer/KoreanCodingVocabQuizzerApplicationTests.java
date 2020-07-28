@@ -3,13 +3,25 @@ package com.hertzog.KoreanCodingVocabQuizzer;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.*;
+
 @SpringBootTest
 class KoreanCodingVocabQuizzerApplicationTests {
+	private final String RESPONSES_FILE = "C:\\Users\\hhert\\IdeaProjects\\KoreanCodingVocabQuizzer\\src\\test\\java\\com\\hertzog\\KoreanCodingVocabQuizzer\\quizResponses";
 
 	@Test
 	void contextLoads() {
 	}
 
-	//TODO: unit tests
+	@Test
+	public void whenRunMain_givenResponsesAsInput_thenRunsQuiz() throws IOException {
+		String[] args = new String[0];
+		final InputStream original = System.in;
+		final FileInputStream fips = new FileInputStream(new File(RESPONSES_FILE));
+		System.setIn(fips);
 
+		KoreanCodingVocabQuizzerApplication.main(args);
+
+		System.setIn(original);
+	}
 }

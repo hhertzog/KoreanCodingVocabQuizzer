@@ -9,18 +9,23 @@ import java.util.Scanner;
 
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class })
 public class KoreanCodingVocabQuizzerApplication {
-	private static Scanner input = new Scanner(System.in);
+	private static Scanner input;
 	private static QuizManager quizManager;
 
 	public static void main(String[] args) {
 		ConfigurableApplicationContext appContext =
 				SpringApplication.run(KoreanCodingVocabQuizzerApplication.class, args);
 		quizManager = appContext.getBean(QuizManager.class);
+		input = new Scanner(System.in);
 
-		loadVocabs();
-		quizOnEnglishTranslations();
-		printGoodbyeMessage();
+		runQuiz();
 	}
+
+	private static void runQuiz() {
+        loadVocabs();
+        quizOnEnglishTranslations();
+        printGoodbyeMessage();
+    }
 
 	private static void loadVocabs() {
 		quizManager.loadVocabs("C:\\Users\\hhert\\IdeaProjects\\KoreanCodingVocabQuizzer\\src\\main\\java\\com\\hertzog\\KoreanCodingVocabQuizzer\\translations");
