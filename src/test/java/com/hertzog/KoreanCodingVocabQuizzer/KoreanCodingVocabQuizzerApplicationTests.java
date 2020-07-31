@@ -7,8 +7,8 @@ import java.io.*;
 
 @SpringBootTest
 class KoreanCodingVocabQuizzerApplicationTests {
-	private final String RESPONSES_FILE = "C:\\Users\\hhert\\IdeaProjects\\KoreanCodingVocabQuizzer\\src\\test\\java\\com\\hertzog\\KoreanCodingVocabQuizzer\\quizResponses";
-
+	private static final String RESPONSES_FILE = System.getProperty("user.dir") +
+			"\\src\\test\\java\\com\\hertzog\\KoreanCodingVocabQuizzer\\quizResponses";
 	@Test
 	void contextLoads() {
 	}

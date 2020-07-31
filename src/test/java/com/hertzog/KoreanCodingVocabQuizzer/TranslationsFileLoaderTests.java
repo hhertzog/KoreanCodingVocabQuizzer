@@ -10,8 +10,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 public class TranslationsFileLoaderTests {
-    private String GOOD_FILE = "C:\\Users\\hhert\\IdeaProjects\\KoreanCodingVocabQuizzer\\src\\test\\java\\com\\hertzog\\KoreanCodingVocabQuizzer\\translations";
-    private String BAD_FILE = "C:\\Users\\hhert\\IdeaProjects\\KoreanCodingVocabQuizzer\\src\\test\\java\\com\\hertzog\\KoreanCodingVocabQuizzer\\badFile";
     private String NONEXISTENT_FILE_PATH = "nonexistent file";
     private int LOWEST_PRIORITY = 1;
     private int HIGHEST_PRIORITY = 3;
@@ -20,6 +18,11 @@ public class TranslationsFileLoaderTests {
     private static final Vocab VOCAB1 = new Vocab(ENGLISH + 1, KOREAN + 1);
     private static final Vocab VOCAB2 = new Vocab(ENGLISH + 2, KOREAN + 2);
     private static final Vocab VOCAB3 = new Vocab(ENGLISH + 3, KOREAN + 3);
+    private static final String GOOD_FILE = System.getProperty("user.dir") +
+            "\\src\\test\\java\\com\\hertzog\\KoreanCodingVocabQuizzer\\translations";
+    private static final String BAD_FILE = System.getProperty("user.dir") +
+            "\\src\\test\\java\\com\\hertzog\\KoreanCodingVocabQuizzer\\badFile";
+
     private List<Vocab> fullVocabList = getFullVocabList();
 
     private TranslationsFileLoader fileLoader;

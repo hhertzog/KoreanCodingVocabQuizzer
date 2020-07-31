@@ -18,8 +18,8 @@ public class QuizManagerTests {
     private static final int HIGHEST_PRIORITY = 3;
     private static final String ENGLISH = "english";
     private static final String KOREAN = "한국어";
-    private String GOOD_FILE = "C:\\Users\\hhert\\IdeaProjects\\KoreanCodingVocabQuizzer\\src\\test\\java\\com\\hertzog\\KoreanCodingVocabQuizzer\\translations";
-
+    private String GOOD_FILE = System.getProperty("user.dir") +
+            "\\src\\test\\java\\com\\hertzog\\KoreanCodingVocabQuizzer\\translations";
     private static final Vocab VOCAB1 = new Vocab(ENGLISH + 1, KOREAN + 1);
     private static final Vocab VOCAB2 = new Vocab(ENGLISH + 2, KOREAN + 2);
     private static final Vocab VOCAB3 = new Vocab(ENGLISH + 3, KOREAN + 3);

@@ -9,6 +9,8 @@ import java.util.Scanner;
 
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class })
 public class KoreanCodingVocabQuizzerApplication {
+	private static final String TRANSLATIONS_FILE_PATH = System.getProperty("user.dir") +
+			"\\src\\main\\java\\com\\hertzog\\KoreanCodingVocabQuizzer\\translations";
 	private static Scanner input;
 	private static QuizManager quizManager;
 
@@ -28,7 +30,7 @@ public class KoreanCodingVocabQuizzerApplication {
     }
 
 	private static void loadVocabs() {
-		quizManager.loadVocabs("C:\\Users\\hhert\\IdeaProjects\\KoreanCodingVocabQuizzer\\src\\main\\java\\com\\hertzog\\KoreanCodingVocabQuizzer\\translations");
+		quizManager.loadVocabs(TRANSLATIONS_FILE_PATH);
 	}
 
 	private static void quizOnEnglishTranslations() {
