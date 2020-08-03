@@ -1,6 +1,8 @@
 package com.hertzog.KoreanCodingVocabQuizzer;
 
 import com.mongodb.MongoClient;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 
@@ -16,5 +18,23 @@ public class MongoDBVocabLoader {
         this.mongoClient = mongoClient;
         this.databaseName = databaseName;
         this.collectionName = collectionName;
+    }
+
+    public void loadMongoVocabsIntoMap(@NonNull PriorityVocabMap vocabMap) {
+        MongoCollection<Vocab> vocabCollection = getVocabCollection();
+        loadAllVocabs(vocabCollection, vocabMap);
+    }
+
+    private void loadAllVocabs(MongoCollection<Vocab> vocabCollection, PriorityVocabMap vocabMap) {
+        MongoCursor<Vocab> cursor = vocabCollection.find().iterator();
+        while (cursor.hasNext()) {
+            Vocab currentVocab = cursor.next();
+            vocabMap.addVocab(currentVocab.getPriority(), currentVocab);
+        }
+        cursor.close();
+    }
+
+    private MongoCollection<Vocab> getVocabCollection() {
+        return mongoClient.getDatabase(databaseName).getCollection(collectionName, Vocab.class);
     }
 }
