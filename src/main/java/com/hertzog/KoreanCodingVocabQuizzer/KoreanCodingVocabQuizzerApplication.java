@@ -1,5 +1,8 @@
 package com.hertzog.KoreanCodingVocabQuizzer;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
@@ -17,6 +20,8 @@ public class KoreanCodingVocabQuizzerApplication {
 	public static void main(String[] args) {
 		ConfigurableApplicationContext appContext =
 				SpringApplication.run(KoreanCodingVocabQuizzerApplication.class, args);
+		// disable printing logs in the console
+		((LoggerContext) LoggerFactory.getILoggerFactory()).getLogger("org.mongodb.driver").setLevel(Level.OFF);
 		quizManager = appContext.getBean(QuizManager.class);
 		input = new Scanner(System.in);
 

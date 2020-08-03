@@ -10,10 +10,11 @@ import static org.junit.Assert.fail;
 public class VocabTests {
     private final String TEST_ENGLISH = "hello";
     private final String TEST_KOREAN  = "안녕하세요";
-    private final String EXPECTED_STRING = "[" + TEST_ENGLISH + " : " + TEST_KOREAN + "]";
+    private final int TEST_PRIORITY = 1;
+    private final String EXPECTED_STRING = "[" + TEST_PRIORITY + " : " + TEST_ENGLISH + " : " + TEST_KOREAN + "]";
 
-    private Vocab testVocab = new Vocab(TEST_ENGLISH, TEST_KOREAN);
-    private Vocab emptyVocab = new Vocab(null, null);
+    private Vocab testVocab = new Vocab(TEST_PRIORITY, TEST_ENGLISH, TEST_KOREAN);
+    private Vocab emptyVocab = new Vocab(TEST_PRIORITY, null, null);
 
     @Test
     public void whenGetEngWord_givenEnglishPresent_thenReturnEnglish() {

@@ -23,7 +23,7 @@ public class QuizManager {
     }
 
     public void loadVocabs(String filePath) {
-        fileLoader.loadAllVocabsFromFileIntoMap(vocabMap.getLowestPriority(), filePath, vocabMap);
+        fileLoader.loadAllVocabsFromFileIntoMap(filePath, vocabMap);
     }
 
     public Vocab getRandomVocab() throws IllegalStateException {

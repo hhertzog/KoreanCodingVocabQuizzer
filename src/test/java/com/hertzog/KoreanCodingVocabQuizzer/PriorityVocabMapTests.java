@@ -18,9 +18,9 @@ public class PriorityVocabMapTests {
     private static final String ENGLISH = "english";
     private static final String KOREAN = "한국어";
 
-    private static final Vocab VOCAB1 = new Vocab(ENGLISH + 1, KOREAN + 1);
-    private static final Vocab VOCAB2 = new Vocab(ENGLISH + 2, KOREAN + 2);
-    private static final Vocab VOCAB3 = new Vocab(ENGLISH + 3, KOREAN + 3);
+    private static final Vocab VOCAB1 = new Vocab(LOWEST_PRIORITY, ENGLISH + 1, KOREAN + 1);
+    private static final Vocab VOCAB2 = new Vocab(LOWEST_PRIORITY, ENGLISH + 2, KOREAN + 2);
+    private static final Vocab VOCAB3 = new Vocab(LOWEST_PRIORITY, ENGLISH + 3, KOREAN + 3);
 
     private PriorityVocabMap map = new PriorityVocabMap(LOWEST_PRIORITY, HIGHEST_PRIORITY);
 

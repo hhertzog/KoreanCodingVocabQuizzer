@@ -1,13 +1,20 @@
 package com.hertzog.KoreanCodingVocabQuizzer;
 
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
+import com.mongodb.ConnectionString;
+import com.mongodb.MongoClientSettings;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoClient;
+import org.bson.codecs.configuration.CodecRegistry;
+import org.bson.codecs.pojo.PojoCodecProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+
+import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
+import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
 @Configuration
 @ComponentScan("com.hertzog.KoreanCodingVocabQuizzer")
@@ -38,9 +45,21 @@ public class Config {
 
     @Bean
     public MongoClient mongoClient() {
+        CodecRegistry pojoCodecRegistry = fromProviders(PojoCodecProvider.builder().automatic(true).build());
+        CodecRegistry codecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(),
+                pojoCodecRegistry);
         String connection = String.format("mongodb+srv://%s:%s@%s/%s?retryWrites=true&w=majority",
                 mongoUsername(), mongoPassword(), mongoHost(), mongoDatabase());
-        return new MongoClient(new MongoClientURI(connection));
+        MongoClientSettings clientSettings = MongoClientSettings.builder()
+                .applyConnectionString(new ConnectionString(connection))
+                .codecRegistry(codecRegistry)
+                .build();
+
+        return MongoClients.create(clientSettings);
+    }
+
+    public String collectionName() {
+        return getConfigValue("spring.data.mongodb.collection");
     }
 
     public int highestPriority() {

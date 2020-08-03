@@ -20,9 +20,9 @@ public class QuizManagerTests {
     private static final String KOREAN = "한국어";
     private String GOOD_FILE = System.getProperty("user.dir") +
             "\\src\\test\\java\\com\\hertzog\\KoreanCodingVocabQuizzer\\translations";
-    private static final Vocab VOCAB1 = new Vocab(ENGLISH + 1, KOREAN + 1);
-    private static final Vocab VOCAB2 = new Vocab(ENGLISH + 2, KOREAN + 2);
-    private static final Vocab VOCAB3 = new Vocab(ENGLISH + 3, KOREAN + 3);
+    private static final Vocab VOCAB1 = new Vocab(LOWEST_PRIORITY, ENGLISH + 1, KOREAN + 1);
+    private static final Vocab VOCAB2 = new Vocab(LOWEST_PRIORITY, ENGLISH + 2, KOREAN + 2);
+    private static final Vocab VOCAB3 = new Vocab(LOWEST_PRIORITY, ENGLISH + 3, KOREAN + 3);
     private List<Vocab> fullVocabList = getFullVocabList();
 
     @Mock
@@ -43,7 +43,7 @@ public class QuizManagerTests {
         quizManager.loadVocabs(GOOD_FILE);
 
         verify(fileLoader, times(1))
-                .loadAllVocabsFromFileIntoMap(LOWEST_PRIORITY, GOOD_FILE, priorityVocabMap);
+                .loadAllVocabsFromFileIntoMap(GOOD_FILE, priorityVocabMap);
     }
 
     @Test

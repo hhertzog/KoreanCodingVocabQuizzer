@@ -10,24 +10,26 @@ import java.util.Scanner;
 
 public class TranslationsFileLoader {
 
-    public void loadAllVocabsFromFileIntoMap(int startingPriority,
-                                             @NonNull String filePath,
+    public void loadAllVocabsFromFileIntoMap(@NonNull String filePath,
                                              @NonNull PriorityVocabMap map) {
         try {
             Scanner fileReader = new Scanner(new File(filePath));
-            loadAllVocabsIntoPriorityMap(startingPriority, fileReader, map);
+            loadAllVocabsIntoPriorityMap(fileReader, map);
         } catch (FileNotFoundException | IllegalArgumentException e) {
             // we may want to give the user another chance to provide an existing file; no exception
             System.err.println("Could not load vocabulary into map.\n" + e.getMessage());
         }
     }
 
-    private void loadAllVocabsIntoPriorityMap(int startingPriority, Scanner fileReader, PriorityVocabMap map) {
-        int currentPriority = startingPriority;
+    private void loadAllVocabsIntoPriorityMap(Scanner fileReader, PriorityVocabMap map) {
         while (fileReader.hasNextLine()) {
-            map.put(currentPriority, parseVocabList(fileReader.nextLine()));
-            currentPriority++;
+            String vocabLine = fileReader.nextLine();
+            map.put(getLinePriority(vocabLine), parseVocabList(vocabLine));
         }
+    }
+
+    private int getLinePriority(String vocabLine) {
+        return Integer.parseInt(vocabLine.substring(1, 2));
     }
 
     private List<Vocab> parseVocabList(String vocabLine) {
