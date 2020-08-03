@@ -1,5 +1,7 @@
 package com.hertzog.KoreanCodingVocabQuizzer;
 
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -34,12 +36,35 @@ public class Config {
         return new TranslationsFileLoader();
     }
 
+    @Bean
+    public MongoClient mongoClient() {
+        String connection = String.format("mongodb+srv://%s:%s@%s/%s?retryWrites=true&w=majority",
+                mongoUsername(), mongoPassword(), mongoHost(), mongoDatabase());
+        return new MongoClient(new MongoClientURI(connection));
+    }
+
     public int highestPriority() {
         return Integer.parseInt(getConfigValue("highestPriority"));
     }
 
     public int lowestPriority() {
         return Integer.parseInt(getConfigValue("lowestPriority"));
+    }
+
+    private String mongoHost() {
+        return getConfigValue("spring.data.mongodb.host");
+    }
+
+    private String mongoDatabase() {
+        return getConfigValue("spring.data.mongodb.database");
+    }
+
+    private String mongoUsername() {
+        return getConfigValue("spring.data.mongodb.username");
+    }
+
+    private String mongoPassword() {
+        return getConfigValue("spring.data.mongodb.password");
     }
 
     private String getConfigValue(String configKey){
