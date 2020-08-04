@@ -40,12 +40,20 @@ public class Vocab {
         return this.priority;
     }
 
+    public void setPriority(int newPriority) {
+        this.priority = newPriority;
+    }
+
     public static Vocab parseVocabFromString(@NonNull String vocabString) throws IllegalArgumentException {
         if (!vocabString.startsWith("[") || !vocabString.endsWith("]") || !vocabString.contains(":")) {
             throw new IllegalArgumentException("String \"" + vocabString + "\" is not in a parsable format");
         }
         String[] parsedVocab = vocabString.replaceAll("\\[|\\]", "").split(":");
         return new Vocab(Integer.parseInt(parsedVocab[0].trim()), parsedVocab[1].trim(), parsedVocab[2].trim());
+    }
+
+    public int hashCode() {
+        return (engWord + korWord).hashCode();
     }
 
     @Override

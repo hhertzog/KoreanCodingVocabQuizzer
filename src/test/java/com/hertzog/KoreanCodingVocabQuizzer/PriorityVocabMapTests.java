@@ -21,6 +21,8 @@ public class PriorityVocabMapTests {
     private static final Vocab VOCAB1 = new Vocab(LOWEST_PRIORITY, ENGLISH + 1, KOREAN + 1);
     private static final Vocab VOCAB2 = new Vocab(LOWEST_PRIORITY, ENGLISH + 2, KOREAN + 2);
     private static final Vocab VOCAB3 = new Vocab(LOWEST_PRIORITY, ENGLISH + 3, KOREAN + 3);
+    private static final Vocab HIGH_PRIORITY_VOCAB =
+            new Vocab(HIGHEST_PRIORITY, ENGLISH + 4, KOREAN + 4);
 
     private PriorityVocabMap map = new PriorityVocabMap(LOWEST_PRIORITY, HIGHEST_PRIORITY);
 
@@ -31,13 +33,13 @@ public class PriorityVocabMapTests {
 
     @Test
     public void whenPutVocabList_givenFilledVocabListAndNoPreviousList_thenReturnNull() {
-        assertThat(map.put(LOWEST_PRIORITY, getFullVocabList())).isNull();
+        assertThat(map.put(LOWEST_PRIORITY, getLowestPriorityVocabList())).isNull();
     }
 
     @Test
     public void whenPutVocabList_givenListAlreadyPresent_thenReturnOldList() {
         assertThat(map.put(LOWEST_PRIORITY, getSingleVocabList())).isNull();
-        assertThat(map.put(LOWEST_PRIORITY, getFullVocabList())).isEqualTo(getSingleVocabList());
+        assertThat(map.put(LOWEST_PRIORITY, getLowestPriorityVocabList())).isEqualTo(getSingleVocabList());
     }
 
     @Test
@@ -52,7 +54,7 @@ public class PriorityVocabMapTests {
     @Test
     public void whenPutVocabList_givenIllegalPriority_thenThrowIllegalArgException() {
         try {
-            map.put(LOWEST_PRIORITY - 1, getFullVocabList());
+            map.put(LOWEST_PRIORITY - 1, getLowestPriorityVocabList());
             fail("did not throw illegal arg exception");
         } catch (IllegalArgumentException e) {
         }
@@ -61,14 +63,14 @@ public class PriorityVocabMapTests {
     @Test
     public void whenAddVocab_givenFirstVocabForPriority_thenNewListCreated() {
         assertThat(map.get(LOWEST_PRIORITY)).isNull();
-        map.addVocab(LOWEST_PRIORITY, VOCAB1);
+        map.addVocab(VOCAB1);
         assertThat(map.get(LOWEST_PRIORITY)).isEqualTo(Collections.singletonList(VOCAB1));
     }
 
     @Test
     public void whenAddVocab_givenIllegalPriority_thenThrowIllegalArgException() {
         try {
-            map.addVocab(HIGHEST_PRIORITY + 1, VOCAB1);
+            map.addVocab(new Vocab(HIGHEST_PRIORITY + 1, ENGLISH, KOREAN));
             fail("did not throw illegal arg exception");
         } catch (IllegalArgumentException e) {
         }
@@ -76,15 +78,15 @@ public class PriorityVocabMapTests {
 
     @Test
     public void whenAddVocab_givenPriorityListExists_thenVocabAddedToList() {
-        map.addVocab(LOWEST_PRIORITY, VOCAB1);
-        map.addVocab(LOWEST_PRIORITY, VOCAB2);
-        map.addVocab(LOWEST_PRIORITY, VOCAB3);
-        assertThat(map.get(LOWEST_PRIORITY)).isEqualTo(getFullVocabList());
+        map.addVocab(VOCAB1);
+        map.addVocab(VOCAB2);
+        map.addVocab(VOCAB3);
+        assertThat(map.get(LOWEST_PRIORITY)).isEqualTo(getLowestPriorityVocabList());
     }
 
     @Test
     public void whenRemoveVocab_givenVocabInMapWithOthersInPriorityList_thenReturnOldPriority() {
-        map.put(LOWEST_PRIORITY, getFullVocabList());
+        map.put(LOWEST_PRIORITY, getLowestPriorityVocabList());
         assertThat(map.get(LOWEST_PRIORITY).contains(VOCAB1));
         assertThat(map.removeVocab(VOCAB1)).isEqualTo(LOWEST_PRIORITY);
         assertThat(map.get(LOWEST_PRIORITY)).doesNotContain(VOCAB1);
@@ -93,14 +95,14 @@ public class PriorityVocabMapTests {
 
     @Test
     public void whenRemoveVocab_givenSingleVocabInPriorityList_thenReturnOldPriority() {
-        map.addVocab(LOWEST_PRIORITY, VOCAB1);
+        map.addVocab(VOCAB1);
         assertThat(map.removeVocab(VOCAB1)).isEqualTo(LOWEST_PRIORITY);
         assertThat(!map.containsKey(LOWEST_PRIORITY));
     }
 
     @Test
     public void whenRemoveVocab_givenVocabNotInMap_thenThrowIllegalArgException() {
-        map.addVocab(LOWEST_PRIORITY, VOCAB1);
+        map.addVocab(VOCAB1);
         try {
             map.removeVocab(VOCAB2);
             fail("did not throw illegal arg exception");
@@ -110,24 +112,32 @@ public class PriorityVocabMapTests {
 
     @Test
     public void whenIncrementVocabPriority_givenNewPriorityListNotInMap_thenCreateNewPriorityList() {
-        map.addVocab(LOWEST_PRIORITY, VOCAB1);
+        map.addVocab(VOCAB1);
         assertThat(!map.containsKey(LOWEST_PRIORITY + 1));
         map.incrementVocabPriority(VOCAB1);
         assertThat(map.get(LOWEST_PRIORITY + 1)).contains(VOCAB1);
+        assertThat(VOCAB1.getPriority()).isEqualTo(LOWEST_PRIORITY + 1);
+
+        VOCAB1.setPriority(LOWEST_PRIORITY);
     }
 
     @Test
     public void whenIncrementVocabPriority_givenNewPriorityListInMap_thenAddToNewPriorityList() {
-        map.addVocab(LOWEST_PRIORITY, VOCAB1);
-        map.addVocab(LOWEST_PRIORITY + 1, VOCAB2);
+        Vocab secondLowestPriorityVocab = new Vocab(LOWEST_PRIORITY + 1, ENGLISH, KOREAN);
+        map.addVocab(VOCAB1);
+        map.addVocab(secondLowestPriorityVocab);
         assertThat(map.containsKey(LOWEST_PRIORITY + 1));
         map.incrementVocabPriority(VOCAB1);
-        assertThat(map.get(LOWEST_PRIORITY + 1)).contains(VOCAB1, VOCAB2);
+        assertThat(map.get(LOWEST_PRIORITY + 1)).contains(VOCAB1, secondLowestPriorityVocab);
+        assertThat(VOCAB1.getPriority()).isEqualTo(LOWEST_PRIORITY + 1);
+
+        VOCAB1.setPriority(LOWEST_PRIORITY);
     }
 
     @Test
     public void whenIncrementVocabPriority_givenVocabNotInMap_thenThrowIllegalArgException() {
-        map.addVocab(LOWEST_PRIORITY, VOCAB1);
+        map.addVocab(VOCAB1);
+        System.err.println(VOCAB2.toString());
         try {
             map.incrementVocabPriority(VOCAB2);
             fail("did not throw illegal arg exception");
@@ -137,31 +147,38 @@ public class PriorityVocabMapTests {
 
     @Test
     public void whenIncrementVocabPriority_givenVocabHasHighestPriority_thenDoesntChangePriority() {
-        map.addVocab(HIGHEST_PRIORITY, VOCAB1);
-        map.incrementVocabPriority(VOCAB1);
-        assertThat(map.removeVocab(VOCAB1)).isEqualTo(HIGHEST_PRIORITY);
+        map.addVocab(HIGH_PRIORITY_VOCAB);
+        map.incrementVocabPriority(HIGH_PRIORITY_VOCAB);
+        assertThat(map.removeVocab(HIGH_PRIORITY_VOCAB)).isEqualTo(HIGHEST_PRIORITY);
+        assertThat(HIGH_PRIORITY_VOCAB.getPriority()).isEqualTo(HIGHEST_PRIORITY);
     }
 
     @Test
     public void whenDecrementVocabPriority_givenNewPriorityListNotInMap_thenCreateNewPriorityList() {
-        map.addVocab(HIGHEST_PRIORITY, VOCAB1);
+        map.addVocab(HIGH_PRIORITY_VOCAB);
         assertThat(!map.containsKey(HIGHEST_PRIORITY - 1));
-        map.decrementVocabPriority(VOCAB1);
-        assertThat(map.get(HIGHEST_PRIORITY - 1)).contains(VOCAB1);
+        map.decrementVocabPriority(HIGH_PRIORITY_VOCAB);
+        assertThat(map.get(HIGHEST_PRIORITY - 1)).contains(HIGH_PRIORITY_VOCAB);
+        assertThat(HIGH_PRIORITY_VOCAB.getPriority()).isEqualTo(HIGHEST_PRIORITY - 1);
+
+        HIGH_PRIORITY_VOCAB.setPriority(HIGHEST_PRIORITY);
     }
 
     @Test
     public void whenDecrementVocabPriority_givenNewPriorityListInMap_thenAddToNewPriorityList() {
-        map.addVocab(HIGHEST_PRIORITY, VOCAB1);
-        map.addVocab(HIGHEST_PRIORITY - 1, VOCAB2);
+        Vocab secondHighestPriorityVocab = new Vocab(HIGHEST_PRIORITY - 1, ENGLISH, KOREAN);
+        map.addVocab(HIGH_PRIORITY_VOCAB);
+        map.addVocab(secondHighestPriorityVocab);
         assertThat(map.containsKey(HIGHEST_PRIORITY - 1));
-        map.decrementVocabPriority(VOCAB1);
-        assertThat(map.get(HIGHEST_PRIORITY - 1)).contains(VOCAB1, VOCAB2);
-    }
+        map.decrementVocabPriority(HIGH_PRIORITY_VOCAB);
+        assertThat(map.get(HIGHEST_PRIORITY - 1)).contains(HIGH_PRIORITY_VOCAB, secondHighestPriorityVocab);
+        assertThat(HIGH_PRIORITY_VOCAB.getPriority()).isEqualTo(HIGHEST_PRIORITY - 1);
+
+        HIGH_PRIORITY_VOCAB.setPriority(HIGHEST_PRIORITY);    }
 
     @Test
     public void whenDecrementVocabPriority_givenVocabNotInMap_thenThrowIllegalArgException() {
-        map.addVocab(LOWEST_PRIORITY, VOCAB1);
+        map.addVocab(VOCAB1);
         try {
             map.decrementVocabPriority(VOCAB2);
             fail("did not throw illegal arg exception");
@@ -171,15 +188,18 @@ public class PriorityVocabMapTests {
 
     @Test
     public void whenDecrementVocabPriority_givenVocabHasLowestPriority_thenDoesntChangePriority() {
-        map.addVocab(LOWEST_PRIORITY, VOCAB1);
+        map.addVocab(VOCAB1);
         map.decrementVocabPriority(VOCAB1);
         assertThat(map.removeVocab(VOCAB1)).isEqualTo(LOWEST_PRIORITY);
     }
 
     @Test
     public void whenToString_givenFilledMap_thenReturnProperString() {
-        map.put(LOWEST_PRIORITY, getFullVocabList());
+        map.put(LOWEST_PRIORITY, getLowestPriorityVocabList());
         assertThat(map.toString()).isEqualTo(getExpectedFullMapString());
+        for (Vocab v : map.get(LOWEST_PRIORITY)) {
+            assertThat(v.getPriority()).isEqualTo(LOWEST_PRIORITY);
+        }
     }
 
     @Test
@@ -198,14 +218,14 @@ public class PriorityVocabMapTests {
     }
 
     private String getExpectedFullMapString() {
-        return "Vocabs for priority " + LOWEST_PRIORITY + ": \n" + getFullVocabList().toString();
+        return "Vocabs for priority " + LOWEST_PRIORITY + ": \n" + getLowestPriorityVocabList().toString();
     }
 
     private List<Vocab> getSingleVocabList() {
         return Collections.singletonList(VOCAB1);
     }
 
-    private List<Vocab> getFullVocabList() {
+    private List<Vocab> getLowestPriorityVocabList() {
         List<Vocab> list = new ArrayList<>();
         list.add(VOCAB1);
         list.add(VOCAB2);

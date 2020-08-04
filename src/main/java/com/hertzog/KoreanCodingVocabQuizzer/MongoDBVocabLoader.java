@@ -25,7 +25,7 @@ public class MongoDBVocabLoader {
 
     public void loadMongoVocabsIntoMap(@NonNull PriorityVocabMap vocabMap) {
         for (Vocab vocab : getAllVocabsAsList()) {
-            vocabMap.addVocab(vocab.getPriority(), vocab);
+            vocabMap.addVocab(vocab);
         }
     }
 

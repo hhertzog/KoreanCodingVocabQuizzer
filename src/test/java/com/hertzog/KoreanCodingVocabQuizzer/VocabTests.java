@@ -3,6 +3,8 @@ package com.hertzog.KoreanCodingVocabQuizzer;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.HashSet;
+
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.Assert.fail;
 
@@ -37,6 +39,20 @@ public class VocabTests {
     }
 
     @Test
+    public void whenGetPriority_givenPriorityPresent_thenReturnPriority() {
+        assertThat(testVocab.getPriority()).isEqualTo(TEST_PRIORITY);
+        assertThat(emptyVocab.getPriority()).isEqualTo(TEST_PRIORITY);
+    }
+
+    @Test
+    public void whenSetPriority_givenGoodPriority_thenChangePriority() {
+        testVocab.setPriority(TEST_PRIORITY + 1);
+        assertThat(testVocab.getPriority()).isEqualTo(TEST_PRIORITY + 1);
+        testVocab.setPriority(TEST_PRIORITY);
+        assertThat(testVocab.getPriority()).isEqualTo(TEST_PRIORITY);
+    }
+
+    @Test
     public void whenToString_givenPresentValues_thenReturnProperString() {
         assertThat(testVocab.toString()).isEqualTo(EXPECTED_STRING);
     }
@@ -55,6 +71,31 @@ public class VocabTests {
             fail("did not throw illegal state exception");
         } catch (IllegalArgumentException e) {
         }
+    }
+
+
+    @Test
+    public void whenHashCode_givenPrioritiesDifferent_thenHashCodesAreEqual() {
+        Vocab lowPriorityVocab = new Vocab(1, TEST_ENGLISH, TEST_KOREAN);
+        Vocab highPriorityVocab = new Vocab(3, TEST_ENGLISH, TEST_KOREAN);
+        HashSet<Vocab> vocabSet = new HashSet<>();
+        vocabSet.add(lowPriorityVocab);
+        vocabSet.add(highPriorityVocab);
+
+        assertThat(lowPriorityVocab.hashCode() == highPriorityVocab.hashCode());
+        assertThat(vocabSet.size() == 1);
+    }
+
+    @Test
+    public void whenHashCode_givenDifferentTranslations_thenHashCodesAreDifferent() {
+        Vocab vocabOne = new Vocab(1, TEST_ENGLISH, TEST_KOREAN);
+        Vocab vocabTwo = new Vocab(1, TEST_ENGLISH + 1, TEST_KOREAN + 1);
+        HashSet<Vocab> vocabSet = new HashSet<>();
+        vocabSet.add(vocabOne);
+        vocabSet.add(vocabTwo);
+
+        assertThat(vocabOne.hashCode() != vocabTwo.hashCode());
+        assertThat(vocabSet.size() == 2);
     }
 
 }
