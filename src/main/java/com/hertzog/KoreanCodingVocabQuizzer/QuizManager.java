@@ -7,23 +7,23 @@ import java.util.List;
 import java.util.Random;
 
 public class QuizManager {
-    private PriorityVocabMap vocabMap;
+    public PriorityVocabMap vocabMap;
     private WeightedRandomizer prioritySelector;
-    private TranslationsFileLoader fileLoader;
+    public MongoDBVocabLoader vocabLoader;
     private Random vocabSelector;
 
     @Autowired
     public QuizManager(@NonNull PriorityVocabMap vocabMap,
                        @NonNull WeightedRandomizer weightedRandomizer,
-                       @NonNull TranslationsFileLoader fileLoader) {
+                       @NonNull MongoDBVocabLoader vocabLoader) {
         this.vocabMap = vocabMap;
         this.prioritySelector = weightedRandomizer;
-        this.fileLoader = fileLoader;
+        this.vocabLoader = vocabLoader;
         this.vocabSelector = new Random();
     }
 
-    public void loadVocabs(String filePath) {
-        fileLoader.loadAllVocabsFromFileIntoMap(filePath, vocabMap);
+    public void loadVocabs() {
+        vocabLoader.loadMongoVocabsIntoMap(vocabMap);
     }
 
     public Vocab getRandomVocab() throws IllegalStateException {

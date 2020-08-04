@@ -25,7 +25,7 @@ public class Config {
 
     @Bean
     public QuizManager quizManager() {
-        return new QuizManager(priorityVocabMap(), weightedRandomizer(), translationsFileLoader());
+        return new QuizManager(priorityVocabMap(), weightedRandomizer(), mongoDBVocabLoader());
     }
 
     @Bean
@@ -44,6 +44,11 @@ public class Config {
     }
 
     @Bean
+    public MongoDBVocabLoader mongoDBVocabLoader() {
+        return new MongoDBVocabLoader(mongoClient(), mongoDatabase(), collectionName());
+    }
+
+    @Bean
     public MongoClient mongoClient() {
         CodecRegistry pojoCodecRegistry = fromProviders(PojoCodecProvider.builder().automatic(true).build());
         CodecRegistry codecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(),
@@ -54,7 +59,6 @@ public class Config {
                 .applyConnectionString(new ConnectionString(connection))
                 .codecRegistry(codecRegistry)
                 .build();
-
         return MongoClients.create(clientSettings);
     }
 

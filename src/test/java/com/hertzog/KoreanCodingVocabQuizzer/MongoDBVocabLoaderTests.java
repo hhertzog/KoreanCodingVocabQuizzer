@@ -1,10 +1,10 @@
 package com.hertzog.KoreanCodingVocabQuizzer;
 
-import com.mongodb.MongoClient;
+import com.mongodb.client.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import org.bson.Document;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,7 +12,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -28,6 +31,7 @@ public class MongoDBVocabLoaderTests {
     private final Vocab VOCAB2 = new Vocab(LOWEST_PRIORITY, ENGLISH + 2, KOREAN + 2);
     private final Vocab VOCAB3 = new Vocab(LOWEST_PRIORITY, ENGLISH + 3, KOREAN + 3);
     private PriorityVocabMap map = new PriorityVocabMap(LOWEST_PRIORITY, HIGHEST_PRIORITY);
+    private ArrayList<Vocab> vocabList = new ArrayList<>();
 
     @Mock
     private MongoClient mongoClient;
@@ -41,9 +45,6 @@ public class MongoDBVocabLoaderTests {
     @Mock
     private FindIterable<Vocab> mongoFind;
 
-    @Mock
-    private MongoCursor mongoCursor;
-
     @InjectMocks
     private MongoDBVocabLoader loader = new MongoDBVocabLoader(mongoClient, DATABASE_NAME, COLLECTION_NAME);
 
@@ -51,15 +52,15 @@ public class MongoDBVocabLoaderTests {
     public void runBefore() {
         when(mongoClient.getDatabase(DATABASE_NAME)).thenReturn(mongoDatabase);
         when(mongoDatabase.getCollection(COLLECTION_NAME, Vocab.class)).thenReturn(mongoCollection);
-        when(mongoCollection.find()).thenReturn(mongoFind);
-        when(mongoFind.iterator()).thenReturn(mongoCursor);
-
+        when(mongoCollection.find(new Document(), Vocab.class)).thenReturn(mongoFind);
+        when(mongoFind.into(any())).thenReturn(vocabList);
     }
 
     @Test
     public void whenLoadMongoVocabsIntoMap_givenVocabsPresentInDB_thenLoadsVocabsIntoMap() {
-        when(mongoCursor.hasNext()).thenReturn(true).thenReturn(true).thenReturn(true).thenReturn(false);
-        when(mongoCursor.next()).thenReturn(VOCAB1).thenReturn(VOCAB2).thenReturn(VOCAB3);
+        vocabList.add(VOCAB1);
+        vocabList.add(VOCAB2);
+        vocabList.add(VOCAB3);
 
         loader.loadMongoVocabsIntoMap(map);
 
@@ -71,8 +72,6 @@ public class MongoDBVocabLoaderTests {
 
     @Test
     public void whenLoadMongoVocabsIntoMap_givenNoVocabsInDB_thenMapStaysEmpty() {
-        when(mongoCursor.hasNext()).thenReturn(false);
-
         loader.loadMongoVocabsIntoMap(map);
 
         assertThat(map.size() == 0);
@@ -81,5 +80,6 @@ public class MongoDBVocabLoaderTests {
     @AfterEach
     public void runAfter() {
         map.clear();
+        vocabList.clear();
     }
 }

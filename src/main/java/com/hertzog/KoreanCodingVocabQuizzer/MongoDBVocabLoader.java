@@ -1,10 +1,13 @@
 package com.hertzog.KoreanCodingVocabQuizzer;
 
-import com.mongodb.MongoClient;
+import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoCursor;
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MongoDBVocabLoader {
     private MongoClient mongoClient;
@@ -21,17 +24,13 @@ public class MongoDBVocabLoader {
     }
 
     public void loadMongoVocabsIntoMap(@NonNull PriorityVocabMap vocabMap) {
-        MongoCollection<Vocab> vocabCollection = getVocabCollection();
-        loadAllVocabs(vocabCollection, vocabMap);
+        for (Vocab vocab : getAllVocabsAsList()) {
+            vocabMap.addVocab(vocab.getPriority(), vocab);
+        }
     }
 
-    private void loadAllVocabs(MongoCollection<Vocab> vocabCollection, PriorityVocabMap vocabMap) {
-        MongoCursor<Vocab> cursor = vocabCollection.find().iterator();
-        while (cursor.hasNext()) {
-            Vocab currentVocab = cursor.next();
-            vocabMap.addVocab(currentVocab.getPriority(), currentVocab);
-        }
-        cursor.close();
+    public List<Vocab> getAllVocabsAsList() {
+        return getVocabCollection().find(new Document(), Vocab.class).into(new ArrayList<>());
     }
 
     private MongoCollection<Vocab> getVocabCollection() {

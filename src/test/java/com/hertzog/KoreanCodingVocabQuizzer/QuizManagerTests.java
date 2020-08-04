@@ -18,8 +18,6 @@ public class QuizManagerTests {
     private static final int HIGHEST_PRIORITY = 3;
     private static final String ENGLISH = "english";
     private static final String KOREAN = "한국어";
-    private String GOOD_FILE = System.getProperty("user.dir") +
-            "\\src\\test\\java\\com\\hertzog\\KoreanCodingVocabQuizzer\\translations";
     private static final Vocab VOCAB1 = new Vocab(LOWEST_PRIORITY, ENGLISH + 1, KOREAN + 1);
     private static final Vocab VOCAB2 = new Vocab(LOWEST_PRIORITY, ENGLISH + 2, KOREAN + 2);
     private static final Vocab VOCAB3 = new Vocab(LOWEST_PRIORITY, ENGLISH + 3, KOREAN + 3);
@@ -32,7 +30,7 @@ public class QuizManagerTests {
     private WeightedRandomizer weightedRandomizer;
 
     @Mock
-    private TranslationsFileLoader fileLoader;
+    private MongoDBVocabLoader vocabLoader;
 
     @InjectMocks
     private QuizManager quizManager;
@@ -40,10 +38,9 @@ public class QuizManagerTests {
     @Test
     public void whenLoadVocabs_givenValidFilePath_thenMakesCallToFileLoader() {
         when(priorityVocabMap.getLowestPriority()).thenReturn(LOWEST_PRIORITY);
-        quizManager.loadVocabs(GOOD_FILE);
+        quizManager.loadVocabs();
 
-        verify(fileLoader, times(1))
-                .loadAllVocabsFromFileIntoMap(GOOD_FILE, priorityVocabMap);
+        verify(vocabLoader, times(1)).loadMongoVocabsIntoMap(priorityVocabMap);
     }
 
     @Test

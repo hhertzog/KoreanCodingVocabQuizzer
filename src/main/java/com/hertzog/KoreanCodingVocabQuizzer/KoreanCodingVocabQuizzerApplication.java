@@ -10,10 +10,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.Scanner;
 
-@SpringBootApplication(exclude = {DataSourceAutoConfiguration.class })
+@SpringBootApplication(exclude = { DataSourceAutoConfiguration.class })
 public class KoreanCodingVocabQuizzerApplication {
-	private static final String TRANSLATIONS_FILE_PATH = System.getProperty("user.dir") +
-			"\\src\\main\\java\\com\\hertzog\\KoreanCodingVocabQuizzer\\translations";
 	private static Scanner input;
 	private static QuizManager quizManager;
 
@@ -35,7 +33,7 @@ public class KoreanCodingVocabQuizzerApplication {
     }
 
 	private static void loadVocabs() {
-		quizManager.loadVocabs(TRANSLATIONS_FILE_PATH);
+		quizManager.loadVocabs();
 	}
 
 	private static void quizOnEnglishTranslations() {

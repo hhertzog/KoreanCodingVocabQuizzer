@@ -10,19 +10,22 @@ import javax.persistence.Entity;
 // and decreases when the user gets the word right.
 @Entity
 public class Vocab {
-    @BsonProperty(value = "engWord")
-    private String engWord;
+    @BsonProperty("priority")
+    public Integer priority;
 
-    @BsonProperty(value = "korWord")
-    private String korWord;
+    @BsonProperty("engWord")
+    public String engWord;
 
-    @BsonProperty(value = "priority")
-    private int priority;
+    @BsonProperty("korWord")
+    public String korWord;
+
+    public Vocab() {
+    }
 
     public Vocab(int priority, @NonNull String engWord, @NonNull String korWord) {
+        this.priority = priority;
         this.engWord = engWord;
         this.korWord = korWord;
-        this.priority = priority;
     }
 
     public String getEngWord() {
