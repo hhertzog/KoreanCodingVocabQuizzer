@@ -5,25 +5,26 @@ import org.springframework.lang.NonNull;
 
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 public class QuizManager {
     public PriorityVocabMap vocabMap;
     private WeightedRandomizer prioritySelector;
-    public MongoDBVocabLoader vocabLoader;
+    public MongoDBVocabManager dbManager;
     private Random vocabSelector;
 
     @Autowired
     public QuizManager(@NonNull PriorityVocabMap vocabMap,
                        @NonNull WeightedRandomizer weightedRandomizer,
-                       @NonNull MongoDBVocabLoader vocabLoader) {
+                       @NonNull MongoDBVocabManager dbManager) {
         this.vocabMap = vocabMap;
         this.prioritySelector = weightedRandomizer;
-        this.vocabLoader = vocabLoader;
+        this.dbManager = dbManager;
         this.vocabSelector = new Random();
     }
 
     public void loadVocabs() {
-        vocabLoader.loadMongoVocabsIntoMap(vocabMap);
+        dbManager.loadMongoVocabsIntoMap(vocabMap);
     }
 
     public Vocab getRandomVocab() throws IllegalStateException {
@@ -33,6 +34,10 @@ public class QuizManager {
 
         int priorityToQuiz = getRandomPriorityPresentInMap();
         return getRandomVocabForPriority(priorityToQuiz);
+    }
+
+    public void updateDatabase(Set<Vocab> vocabSet) {
+        dbManager.updatePrioritiesInDatabase(vocabSet);
     }
 
     public void raisePriority(@NonNull Vocab vocab) throws IllegalArgumentException {

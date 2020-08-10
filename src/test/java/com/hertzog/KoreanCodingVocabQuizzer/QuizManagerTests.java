@@ -30,7 +30,7 @@ public class QuizManagerTests {
     private WeightedRandomizer weightedRandomizer;
 
     @Mock
-    private MongoDBVocabLoader vocabLoader;
+    private MongoDBVocabManager dbManager;
 
     @InjectMocks
     private QuizManager quizManager;
@@ -40,7 +40,7 @@ public class QuizManagerTests {
         when(priorityVocabMap.getLowestPriority()).thenReturn(LOWEST_PRIORITY);
         quizManager.loadVocabs();
 
-        verify(vocabLoader, times(1)).loadMongoVocabsIntoMap(priorityVocabMap);
+        verify(dbManager, times(1)).loadMongoVocabsIntoMap(priorityVocabMap);
     }
 
     @Test
@@ -62,6 +62,16 @@ public class QuizManagerTests {
             fail("did not throw illegal state exception");
         } catch (IllegalStateException e) {
         }
+    }
+
+    @Test
+    public void whenUpdateDatabase_givenVocabSet_thenCallsDatabaseManagerToUpdate() {
+        Set<Vocab> vocabSet = new HashSet<>();
+        vocabSet.add(VOCAB1);
+
+        quizManager.updateDatabase(vocabSet);
+
+        verify(dbManager).updatePrioritiesInDatabase(vocabSet);
     }
 
     @Test

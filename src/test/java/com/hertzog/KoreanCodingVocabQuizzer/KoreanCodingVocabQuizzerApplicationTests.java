@@ -7,6 +7,7 @@ import java.io.*;
 
 @SpringBootTest
 class KoreanCodingVocabQuizzerApplicationTests {
+	//TODO: make test config file to allow mocking beans
 	private static final String RESPONSES_FILE = System.getProperty("user.dir") +
 			"\\src\\test\\java\\com\\hertzog\\KoreanCodingVocabQuizzer\\quizResponses";
 	@Test

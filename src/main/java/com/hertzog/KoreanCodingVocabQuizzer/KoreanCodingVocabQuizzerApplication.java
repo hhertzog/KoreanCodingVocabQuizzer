@@ -8,7 +8,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 
 @SpringBootApplication(exclude = { DataSourceAutoConfiguration.class })
 public class KoreanCodingVocabQuizzerApplication {
@@ -38,6 +40,7 @@ public class KoreanCodingVocabQuizzerApplication {
 
 	private static void quizOnEnglishTranslations() {
 		boolean shouldKeepPlaying = true;
+		Set<Vocab> vocabsSeen = new HashSet<>();
 		System.out.println("Please type \"x\" when you want to quit.");
 
 		while (shouldKeepPlaying) {
@@ -50,8 +53,10 @@ public class KoreanCodingVocabQuizzerApplication {
 				shouldKeepPlaying = false;
 			} else {
 				handleResponse(response, vocabToQuiz);
+				vocabsSeen.add(vocabToQuiz);
 			}
 		}
+		quizManager.updateDatabase(vocabsSeen);
 	}
 
 	private static void handleResponse(String response, Vocab vocabToQuiz) {

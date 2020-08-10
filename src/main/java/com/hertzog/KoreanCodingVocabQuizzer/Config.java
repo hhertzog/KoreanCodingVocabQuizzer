@@ -4,6 +4,7 @@ import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoCollection;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,13 +40,8 @@ public class Config {
     }
 
     @Bean
-    public TranslationsFileLoader translationsFileLoader() {
-        return new TranslationsFileLoader();
-    }
-
-    @Bean
-    public MongoDBVocabLoader mongoDBVocabLoader() {
-        return new MongoDBVocabLoader(mongoClient(), mongoDatabase(), collectionName());
+    public MongoDBVocabManager mongoDBVocabLoader() {
+        return new MongoDBVocabManager(mongoCollection());
     }
 
     @Bean
@@ -60,6 +56,11 @@ public class Config {
                 .codecRegistry(codecRegistry)
                 .build();
         return MongoClients.create(clientSettings);
+    }
+
+    @Bean
+    public MongoCollection<Vocab> mongoCollection() {
+        return mongoClient().getDatabase(mongoDatabase()).getCollection(collectionName(), Vocab.class);
     }
 
     public String collectionName() {
