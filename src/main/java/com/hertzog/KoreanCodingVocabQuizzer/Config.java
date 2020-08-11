@@ -8,6 +8,7 @@ import com.mongodb.client.MongoCollection;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +24,21 @@ import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 public class Config {
     @Autowired
     private Environment env;
+
+    @Value("${spring.data.mongodb.host}")
+    private String mongoHost;
+
+    @Value("${spring.data.mongodb.username}")
+    private String mongoUsername;
+
+    @Value("${spring.data.mongodb.password}")
+    private String mongoPassword;
+
+    @Value("${spring.data.mongodb.database}")
+    private String mongoDatabase;
+
+    @Value("${spring.data.mongodb.collection}")
+    private String mongoCollection;
 
     @Bean
     public QuizManager quizManager() {
@@ -50,7 +66,7 @@ public class Config {
         CodecRegistry codecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(),
                 pojoCodecRegistry);
         String connection = String.format("mongodb+srv://%s:%s@%s/%s?retryWrites=true&w=majority",
-                mongoUsername(), mongoPassword(), mongoHost(), mongoDatabase());
+                mongoUsername, mongoPassword, mongoHost, mongoDatabase);
         MongoClientSettings clientSettings = MongoClientSettings.builder()
                 .applyConnectionString(new ConnectionString(connection))
                 .codecRegistry(codecRegistry)
@@ -60,11 +76,7 @@ public class Config {
 
     @Bean
     public MongoCollection<Vocab> mongoCollection() {
-        return mongoClient().getDatabase(mongoDatabase()).getCollection(collectionName(), Vocab.class);
-    }
-
-    public String collectionName() {
-        return getConfigValue("spring.data.mongodb.collection");
+        return mongoClient().getDatabase(mongoDatabase).getCollection(mongoCollection, Vocab.class);
     }
 
     public int highestPriority() {
@@ -73,22 +85,6 @@ public class Config {
 
     public int lowestPriority() {
         return Integer.parseInt(getConfigValue("lowestPriority"));
-    }
-
-    private String mongoHost() {
-        return getConfigValue("spring.data.mongodb.host");
-    }
-
-    private String mongoDatabase() {
-        return getConfigValue("spring.data.mongodb.database");
-    }
-
-    private String mongoUsername() {
-        return getConfigValue("spring.data.mongodb.username");
-    }
-
-    private String mongoPassword() {
-        return getConfigValue("spring.data.mongodb.password");
     }
 
     private String getConfigValue(String configKey){
