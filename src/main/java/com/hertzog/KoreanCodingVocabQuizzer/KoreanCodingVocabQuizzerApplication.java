@@ -8,6 +8,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.lang.NonNull;
 
 import java.util.HashSet;
@@ -16,6 +17,7 @@ import java.util.Set;
 
 import static java.lang.System.exit;
 
+@Profile("!test")
 @SpringBootApplication(exclude = { DataSourceAutoConfiguration.class })
 public class KoreanCodingVocabQuizzerApplication implements CommandLineRunner {
 	private Scanner input;

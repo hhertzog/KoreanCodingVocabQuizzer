@@ -2,12 +2,14 @@ package com.hertzog.KoreanCodingVocabQuizzer;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.HashSet;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.Assert.fail;
 
+@ActiveProfiles("test")
 @SpringBootTest
 public class VocabTests {
     private final String TEST_ENGLISH = "hello";

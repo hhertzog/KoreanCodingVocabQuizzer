@@ -3,6 +3,7 @@ package com.hertzog.KoreanCodingVocabQuizzer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,6 +12,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
+@ActiveProfiles("test")
 @SpringBootTest
 public class PriorityVocabMapTests {
     private static final int LOWEST_PRIORITY = 1;

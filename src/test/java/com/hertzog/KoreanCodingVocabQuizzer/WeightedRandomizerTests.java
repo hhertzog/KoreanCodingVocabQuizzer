@@ -2,10 +2,12 @@ package com.hertzog.KoreanCodingVocabQuizzer;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
+@ActiveProfiles("test")
 @SpringBootTest
 public class WeightedRandomizerTests {
     private static final int TEST_WEIGHT = 4;
