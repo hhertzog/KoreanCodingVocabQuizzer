@@ -76,6 +76,16 @@ public class QuizManagerTests {
     }
 
     @Test
+    public void whenAddVocabsToDatabase_givenVocabSet_thenCallsDatabaseManagerToAdd() {
+        Set<Vocab> vocabSet = new HashSet<>();
+        vocabSet.add(VOCAB1);
+
+        quizManager.addVocabsToDatabase(vocabSet);
+
+        verify(dbManager).addNewVocabsToDatabase(vocabSet);
+    }
+
+    @Test
     public void whenRaisePriority_givenMapDoesntThrowException_thenNoException() {
         quizManager.raisePriority(VOCAB1);
     }

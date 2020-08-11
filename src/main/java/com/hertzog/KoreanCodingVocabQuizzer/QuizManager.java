@@ -8,9 +8,9 @@ import java.util.Random;
 import java.util.Set;
 
 public class QuizManager {
-    public PriorityVocabMap vocabMap;
+    private PriorityVocabMap vocabMap;
     private WeightedRandomizer prioritySelector;
-    public MongoDBVocabManager dbManager;
+    private MongoDBVocabManager dbManager;
     private Random vocabSelector;
 
     @Autowired
@@ -38,6 +38,10 @@ public class QuizManager {
 
     public void updateDatabase(Set<Vocab> vocabSet) {
         dbManager.updatePrioritiesInDatabase(vocabSet);
+    }
+
+    public void addVocabsToDatabase(Set<Vocab> vocabSet) {
+        dbManager.addNewVocabsToDatabase(vocabSet);
     }
 
     public void raisePriority(@NonNull Vocab vocab) throws IllegalArgumentException {

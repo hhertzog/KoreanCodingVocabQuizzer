@@ -26,10 +26,16 @@ public class MongoDBVocabManager {
         }
     }
 
-    public void updatePrioritiesInDatabase(Set<Vocab> vocabSet) {
-        for (Vocab vocab : vocabSet) {
-            mongoCollection.updateOne(makeFilterUpdateQuery(vocab), makeUpdatedPriorityDoc(vocab));
-        }
+    public void updatePrioritiesInDatabase(@NonNull Set<Vocab> vocabSet) {
+        vocabSet.stream()
+                .forEach(vocab -> mongoCollection
+                        .updateOne(makeFilterUpdateQuery(vocab), makeUpdatedPriorityDoc(vocab)));
+    }
+
+    public void addNewVocabsToDatabase(@NonNull Set<Vocab> vocabSet) {
+        vocabSet.stream()
+                .forEach(vocab -> mongoCollection
+                        .insertOne(vocab));
     }
 
     private Bson makeFilterUpdateQuery(Vocab vocab) {

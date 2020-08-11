@@ -79,11 +79,11 @@ public class Config {
         return mongoClient().getDatabase(mongoDatabase).getCollection(mongoCollection, Vocab.class);
     }
 
-    public int highestPriority() {
+    private int highestPriority() {
         return Integer.parseInt(getConfigValue("highestPriority"));
     }
 
-    public int lowestPriority() {
+    private int lowestPriority() {
         return Integer.parseInt(getConfigValue("lowestPriority"));
     }
 

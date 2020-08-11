@@ -2,6 +2,7 @@ package com.hertzog.KoreanCodingVocabQuizzer;
 
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
+import org.assertj.core.util.Lists;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,7 +20,8 @@ import java.util.Set;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -53,7 +55,7 @@ public class MongoDBVocabManagerTests {
     private MongoDBVocabManager manager;
 
     @BeforeEach
-    public void runBefore() {
+    public void setup() {
         map.clear();
         when(mongoCollection.find()).thenReturn(mongoFind);
         when(mongoFind.into(any())).thenReturn(vocabList);
@@ -63,17 +65,21 @@ public class MongoDBVocabManagerTests {
     public void whenLoadMongoVocabsIntoMap_givenVocabsPresentInDB_thenLoadsVocabsIntoMap() {
         manager.loadMongoVocabsIntoMap(map);
 
-        assertThat(map.size() == 3);
-        assertThat(map.get(LOWEST_PRIORITY).contains(VOCAB1));
-        assertThat(map.get(LOWEST_PRIORITY).contains(VOCAB2));
-        assertThat(map.get(LOWEST_PRIORITY).contains(VOCAB3));
+        assertEquals(1, map.size());
+        assertEquals(3, map.get(LOWEST_PRIORITY).size());
+        assertTrue(map.get(LOWEST_PRIORITY).contains(VOCAB1));
+        assertTrue(map.get(LOWEST_PRIORITY).contains(VOCAB2));
+        assertTrue(map.get(LOWEST_PRIORITY).contains(VOCAB3));
     }
 
     @Test
     public void whenLoadMongoVocabsIntoMap_givenNoVocabsInDB_thenMapStaysEmpty() {
+        when(mongoFind.into(any())).thenReturn(Lists.emptyList());
+        assertEquals(map.size(), 0);
+
         manager.loadMongoVocabsIntoMap(map);
 
-        assertThat(map.size() == 0);
+        assertEquals(map.size(), 0);
     }
 
     @Test
@@ -87,8 +93,48 @@ public class MongoDBVocabManagerTests {
         ArgumentCaptor<Document> docCaptor = ArgumentCaptor.forClass(Document.class);
 
         verify(mongoCollection, times(3)).updateOne(bsonCaptor.capture(), docCaptor.capture());
-        assertThat(bsonCaptor.getAllValues().containsAll(getUpdateFilterList()));
-        assertThat(docCaptor.getValue().equals(LOWEST_PRIORITY_SETTER));
+        assertEquals(bsonCaptor.getAllValues().size(), getUpdateFilterList().size());
+        assertTrue(docCaptor.getValue().equals(LOWEST_PRIORITY_SETTER));
+    }
+
+    @Test
+    public void whenUpdatePrioritiesInDatabase_givenEmptySet_thenNoUpdatesInDatabase() {
+        Set<Vocab> vocabSet = new HashSet<>();
+
+        manager.updatePrioritiesInDatabase(vocabSet);
+
+        ArgumentCaptor<Bson> bsonCaptor = ArgumentCaptor.forClass(Bson.class);
+        ArgumentCaptor<Document> docCaptor = ArgumentCaptor.forClass(Document.class);
+
+        verify(mongoCollection, times(0)).updateOne(bsonCaptor.capture(), docCaptor.capture());
+        assertEquals(0, bsonCaptor.getAllValues().size());
+        assertEquals(0, docCaptor.getAllValues().size());
+    }
+
+    @Test
+    public void whenAddNewVocabsToDatabase_givenVocabSet_thenAddsToDatabase() {
+        Set<Vocab> vocabSet = new HashSet<>();
+        vocabSet.addAll(vocabList);
+
+        manager.addNewVocabsToDatabase(vocabSet);
+
+        ArgumentCaptor<Vocab> vocabCaptor = ArgumentCaptor.forClass(Vocab.class);
+
+        verify(mongoCollection, times(vocabSet.size())).insertOne(vocabCaptor.capture());
+        assertTrue(vocabCaptor.getAllValues().containsAll(vocabSet));
+        assertEquals(vocabSet.size(), vocabCaptor.getAllValues().size());
+    }
+
+    @Test
+    public void whenAddNewVocabsToDatabase_givenNullSet_thenAddsToDatabase() {
+        Set<Vocab> vocabSet = new HashSet<>();
+
+        manager.addNewVocabsToDatabase(vocabSet);
+
+        ArgumentCaptor<Vocab> vocabCaptor = ArgumentCaptor.forClass(Vocab.class);
+
+        verify(mongoCollection, times(0)).insertOne(vocabCaptor.capture());
+        assertEquals(0, vocabCaptor.getAllValues().size());
     }
 
     private List<Bson> getUpdateFilterList() {
