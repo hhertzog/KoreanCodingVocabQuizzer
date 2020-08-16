@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.lang.NonNull;
 
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -24,13 +25,15 @@ public class KoreanCodingVocabQuizzerApplication implements CommandLineRunner {
 	@Value("${highestPriority}")
 	private Integer highestPriority;
 
+	private Random languageChooser;
 	private Scanner input;
 	private QuizManager quizManager;
 
 	@Autowired
 	public KoreanCodingVocabQuizzerApplication(@NonNull QuizManager quizManager) {
-		this.quizManager = quizManager;
+		this.languageChooser = new Random();
 		this.input = new Scanner(System.in);
+		this.quizManager = quizManager;
 	}
 
 	public static void main(String[] args) {
@@ -41,7 +44,6 @@ public class KoreanCodingVocabQuizzerApplication implements CommandLineRunner {
 	public void run(String... args) {
 		// disable printing mongo logs in the console
 		((LoggerContext) LoggerFactory.getILoggerFactory()).getLogger("org.mongodb.driver").setLevel(Level.OFF);
-
 		runQuiz();
 		exit(0);
 	}
@@ -49,7 +51,7 @@ public class KoreanCodingVocabQuizzerApplication implements CommandLineRunner {
 	private void runQuiz() {
 		promptForAddingNewVocab();
 		loadVocabs();
-		quizOnEnglishTranslations();
+		startQuiz();
         printGoodbyeMessage();
     }
 
@@ -70,39 +72,37 @@ public class KoreanCodingVocabQuizzerApplication implements CommandLineRunner {
 		}
 	}
 
-	private void quizOnEnglishTranslations() {
+	private void startQuiz() {
 		boolean shouldKeepPlaying = true;
 		Set<Vocab> vocabsSeen = new HashSet<>();
 		System.out.println("Please type \"x\" when you want to quit.");
 
 		while (shouldKeepPlaying) {
 			Vocab vocabToQuiz = quizManager.getRandomVocab();
+			shouldKeepPlaying = playSingleQuizRound(vocabToQuiz);
 
-			System.out.println("\nWhat is the English translation of " + vocabToQuiz.getKorWord() + "?");
-			String response = input.nextLine();
-
-			if (response.equals("x")) {
-				shouldKeepPlaying = false;
-			} else {
-				handleResponse(response, vocabToQuiz);
+			if (shouldKeepPlaying) {
 				vocabsSeen.add(vocabToQuiz);
 			}
 		}
 		quizManager.updateDatabase(vocabsSeen);
 	}
 
-	private void handleResponse(String response, Vocab vocabToQuiz) {
-		if (answeredCorrectly(response, vocabToQuiz.getEngWord())) {
-			System.out.println("Correct!");
-			quizManager.lowerPriority(vocabToQuiz);
-		} else {
-			System.out.println("Sorry, the correct answer was " + vocabToQuiz.getEngWord());
-			quizManager.raisePriority(vocabToQuiz);
-		}
+	// returns true if user wants to play another round; false if not
+	private boolean playSingleQuizRound(Vocab vocabToQuiz) {
+		return shouldQuizOnEnglishAnswer() ?
+				quizOnSingleVocab("English", vocabToQuiz.getKorWord(), vocabToQuiz.getEngWord(), vocabToQuiz) :
+				quizOnSingleVocab("Korean", vocabToQuiz.getEngWord(), vocabToQuiz.getKorWord(), vocabToQuiz);
 	}
 
-	private boolean answeredCorrectly(String response, String correctAnswer) {
-		return response.trim().equalsIgnoreCase(correctAnswer);
+	private boolean quizOnSingleVocab(String language, String quizWord, String translation, Vocab vocabToQuiz) {
+		System.out.println("\nWhat is the " + language + " translation of \"" + quizWord + "\"?");
+		String response = input.nextLine();
+		if (!response.equalsIgnoreCase("x")) {
+			handleResponse(response, translation, vocabToQuiz);
+			return true;
+		}
+		return false;
 	}
 
 	private void addNewVocabulary() {
@@ -122,6 +122,24 @@ public class KoreanCodingVocabQuizzerApplication implements CommandLineRunner {
 		}
 
 		quizManager.addVocabsToDatabase(wordsToAdd);
+	}
+
+	private void handleResponse(String response, String correctAnswer, Vocab vocabToQuiz) {
+		if (answeredCorrectly(response, correctAnswer)) {
+			System.out.println("Correct!");
+			quizManager.lowerPriority(vocabToQuiz);
+		} else {
+			System.out.println("Sorry, the correct answer was " + correctAnswer);
+			quizManager.raisePriority(vocabToQuiz);
+		}
+	}
+
+	private boolean answeredCorrectly(String response, String correctAnswer) {
+		return response.trim().equalsIgnoreCase(correctAnswer);
+	}
+
+	private boolean shouldQuizOnEnglishAnswer() {
+		return languageChooser.nextInt(2) % 2 == 0;
 	}
 
 	private void printGoodbyeMessage() {
