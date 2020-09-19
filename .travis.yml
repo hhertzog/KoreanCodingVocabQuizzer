@@ -2,7 +2,11 @@
 # https://docs.travis-ci.com/user/languages/java/
 language: java
 
-jdk: oraclejdk8
+jdk:
+  - openjdk8
+  - openjdk9
+  - openjdk11
+  - openjdk12
 
 install: true
 script: ./mvnw clean install
