@@ -10,3 +10,6 @@ jdk:
 
 install: true
 script: ./mvnw clean install
+
+before_install:
+  - chmod +x mvnw
